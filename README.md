@@ -6,7 +6,7 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
 
 ---
 
-## Current Status: Sprint 5 Complete (Expenses & Financial Reports)
+## Current Status: Sprint 6 Complete (Notes with Search & Quick Capture MVP)
 
 - [x] **Sprint 1 (Foundation):** Express server, Prisma migrations, PostgreSQL integration, and React client shell.
 - [x] **Sprint 2 (Authentication):**
@@ -30,6 +30,12 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
   - Database SQL-aggregated monthly summary (`prisma.$queryRaw`) calculating total income, total expense, net savings, and category distribution directly in PostgreSQL (Rule #7 compliant).
   - Strict user isolation tests: User B cannot view, modify, or delete User A's transactions; User B's reports strictly exclude other users' transactions (404 Not Found on unauthorized access).
   - Interactive React interface with monthly overview cards, Recharts category distribution chart, and transaction logging modal.
+- [x] **Sprint 6 (Notes with Search & Quick Capture MVP):**
+  - `notes` database model with tag array, archive tracking (`archived_at`), and `(ownerId, archivedAt)` indexing.
+  - Full Notes CRUD with keyword search (`q`), tag filtering, archive/unarchive status, and pagination.
+  - Quick Capture module with deterministic rule-based heuristic parsing (`POST /api/capture/preview`) extracting candidate type (`TASK`, `EVENT`, `TRANSACTION`, `NOTE`) and fields.
+  - Confirmation-before-save lifecycle (`POST /api/capture/confirm`) strictly honoring Rule #12 (never automatically creating records without user preview and explicit confirmation).
+  - Interactive React interface with Notes grid, instant search, tag filter pills, workspace-wide Quick Capture bar, and editable preview modal.
 
 ---
 
@@ -83,7 +89,7 @@ npm run dev
 ### Server:
 ```bash
 cd server
-npm test        # Runs Vitest test suite (50 passing tests across 5 suites)
+npm test        # Runs Vitest test suite (75 passing tests across 7 suites)
 npm run lint    # Runs ESLint (0 errors, 0 warnings)
 ```
 
@@ -122,6 +128,13 @@ npm run build   # Production bundle verification
 | `GET` | `/api/transactions/:id` | Retrieve single transaction owned by user (404 for other users) | Yes (Bearer token) |
 | `PATCH` | `/api/transactions/:id` | Update transaction amount, category, or date (404 for other users) | Yes (Bearer token) |
 | `DELETE` | `/api/transactions/:id` | Delete transaction owned by user (404 for other users) | Yes (Bearer token) |
+| `GET` | `/api/notes` | List notes with keyword search (`q`), tag, and archived filters | Yes (Bearer token) |
+| `POST` | `/api/notes` | Create a note with title, body, and tags | Yes (Bearer token) |
+| `GET` | `/api/notes/:id` | Retrieve single note owned by user (404 for other users) | Yes (Bearer token) |
+| `PATCH` | `/api/notes/:id` | Update note content or toggle archive status (404 for other users) | Yes (Bearer token) |
+| `DELETE` | `/api/notes/:id` | Delete note owned by user (404 for other users) | Yes (Bearer token) |
+| `POST` | `/api/capture/preview` | Rule-based parsing of unstructured text into candidate type and fields | Yes (Bearer token) |
+| `POST` | `/api/capture/confirm` | Create target record (Task, Event, Transaction, or Note) after user preview | Yes (Bearer token) |
 
 ---
 
@@ -131,3 +144,4 @@ npm run build   # Production bundle verification
 - **`tasks`**: `id` (UUID), `owner_id` (FK -> users), `title`, `description`, `status` (`TODO`, `IN_PROGRESS`, `DONE`, `CANCELLED`), `priority` (`LOW`, `MEDIUM`, `HIGH`, `URGENT`), `due_at`, `tags`, `created_at`, `updated_at`
 - **`events`**: `id` (UUID), `owner_id` (FK -> users), `title`, `description`, `start_at`, `end_at`, `reminder_at`, `recurrence_rule`, `created_at`, `updated_at`
 - **`transactions`**: `id` (UUID), `owner_id` (FK -> users), `type` (`INCOME`, `EXPENSE`), `amount` (Decimal 12,2), `currency`, `category`, `occurred_at`, `note`, `created_at`, `updated_at`
+- **`notes`**: `id` (UUID), `owner_id` (FK -> users), `title`, `body`, `tags`, `archived_at`, `created_at`, `updated_at`

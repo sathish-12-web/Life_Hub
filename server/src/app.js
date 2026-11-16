@@ -8,6 +8,8 @@ import authRoutes from './modules/auth/auth.routes.js';
 import tasksRoutes from './modules/tasks/tasks.routes.js';
 import eventsRoutes from './modules/events/events.routes.js';
 import transactionsRoutes from './modules/transactions/transactions.routes.js';
+import notesRoutes from './modules/notes/notes.routes.js';
+import captureRoutes from './modules/capture/capture.routes.js';
 import { errorHandler, AppError } from './middleware/errorHandler.js';
 
 const app = express();
@@ -26,6 +28,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/transactions', transactionsRoutes);
+app.use('/api/notes', notesRoutes);
+app.use('/api/capture', captureRoutes);
 
 // Catch 404
 app.use((req, res, next) => {
