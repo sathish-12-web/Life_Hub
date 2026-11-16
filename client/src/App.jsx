@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { api } from './services/api';
 import { refreshSession, logoutUser } from './features/auth/authSlice';
 import AuthForms from './features/auth/AuthForms';
+import TaskList from './features/tasks/TaskList';
 
 export default function App() {
   const [healthStatus, setHealthStatus] = useState({ loading: true, data: null, error: null });
@@ -46,14 +47,14 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 transition-colors"
               >
                 Log Out
               </button>
             </div>
           ) : (
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-              Sprint 2 Active
+              Sprint 3 Active
             </span>
           )}
         </div>
@@ -68,78 +69,50 @@ export default function App() {
           </div>
         ) : isAuthenticated && user ? (
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Welcome, {user.name}! 👋</h2>
-                  <p className="text-sm text-slate-600 mt-1">
-                    You are securely authenticated. Your personal workspace is ready for Sprint 3 (Tasks CRUD).
-                  </p>
-                </div>
-                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                  Authenticated
+            {/* Top Greeting */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900">Workspace Dashboard</h2>
+                <p className="text-xs text-slate-500">
+                  Welcome back, <strong className="text-slate-700">{user.name}</strong>. Here is your daily productivity agenda.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                  Private Session Active
                 </span>
               </div>
-
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-100">
-                <div className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-xs text-slate-500">Email Address</p>
-                  <p className="text-sm font-medium text-slate-800 truncate">{user.email}</p>
-                </div>
-                <div className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-xs text-slate-500">Account ID</p>
-                  <p className="text-sm font-mono text-slate-800 truncate text-[11px]">{user.id}</p>
-                </div>
-                <div className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-xs text-slate-500">Timezone</p>
-                  <p className="text-sm font-medium text-slate-800">{user.timezone || 'UTC'}</p>
-                </div>
-              </div>
             </div>
 
-            {/* Diagnostics Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-sm font-semibold text-slate-800 mb-2">Backend Connection Status</h3>
-              {healthStatus.loading ? (
-                <p className="text-xs text-slate-500">Connecting to API...</p>
-              ) : healthStatus.error ? (
-                <p className="text-xs text-rose-500">API error: {healthStatus.error}</p>
-              ) : (
-                <div className="flex items-center gap-2 text-xs text-emerald-700">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span>API Status: <strong>{healthStatus.data?.status}</strong></span>
-                  <span className="text-slate-300">|</span>
-                  <span>Database: <strong>{healthStatus.data?.database}</strong></span>
-                </div>
-              )}
-            </div>
+            {/* Task Management System */}
+            <TaskList />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 mb-4">
-                Sprint 2: Authentication
+                Milestone 1: Tasks & Workspaces
               </span>
               <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                Your life organized in one secure place.
+                Your personal workspace, organized and private.
               </h2>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                LifeHub keeps your tasks, events, expenses, and notes structured and private by default.
-                No data selling, no vendor lock-in, and strict user isolation.
+                Keep your tasks, upcoming schedule, expenses, and notes in one unified system.
+                Private by default, fast, and protected by strict authorization boundaries.
               </p>
 
               <div className="mt-6 space-y-3">
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Password hashing with bcrypt</span>
+                  <span>Full Task lifecycle (Create, Edit, Prioritize, Complete, Delete)</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Short-lived JWT access tokens + httpOnly refresh cookies</span>
+                  <span>Guaranteed data isolation (User B cannot access User A resources)</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Rate limiting and Zod request validation</span>
+                  <span>Automated test coverage on all endpoints</span>
                 </div>
               </div>
             </div>
@@ -152,8 +125,12 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-4xl mx-auto w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200">
-        LIFEHUB &bull; Sprint 2 Complete &bull; React, Node.js, Express, PostgreSQL, Prisma
+      <footer className="max-w-4xl mx-auto w-full py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-200 gap-2">
+        <span>LIFEHUB &bull; Sprint 3 Complete &bull; React, Express, PostgreSQL, Prisma</span>
+        <span className="flex items-center gap-1.5">
+          <span className={`h-2 w-2 rounded-full ${healthStatus.data ? 'bg-emerald-500' : 'bg-amber-400'}`} />
+          <span>API: {healthStatus.data?.status || 'Connecting...'}</span>
+        </span>
       </footer>
     </div>
   );

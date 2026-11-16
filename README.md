@@ -6,7 +6,7 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
 
 ---
 
-## Current Status: Sprint 2 Complete (Authentication & Protected Routes)
+## Current Status: Milestone 1 / Sprint 3 Complete (Tasks CRUD & Dashboard)
 
 - [x] **Sprint 1 (Foundation):** Express server, Prisma migrations, PostgreSQL integration, and React client shell.
 - [x] **Sprint 2 (Authentication):**
@@ -14,8 +14,11 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
   - Login with brute-force rate limiting and non-revealing error messages.
   - Dual-token auth: short-lived JWT access token in memory + httpOnly refresh cookie.
   - Protected route middleware (`authenticate.js`) and user profile retrieval (`GET /api/auth/me`).
-  - Automated integration test suite covering happy paths, 400 validation, 401 unauthenticated, and 409 conflicts.
-  - Redux Toolkit auth slice and responsive login/register UI in React.
+- [x] **Sprint 3 (Tasks CRUD & Dashboard - First Milestone Vertical Slice):**
+  - Full task lifecycle (create, paginated list, filter by status/priority, edit, complete, delete).
+  - Strict user isolation tests: User B cannot access, read, modify, or delete User A's tasks (returning 404 Not Found to prevent ID enumeration).
+  - Dashboard overview metrics (Total, To Do, In Progress, Completed, Overdue).
+  - Interactive React interface with filter tabs, priority indicators, tags, and modal dialogs.
 
 ---
 
@@ -69,7 +72,7 @@ npm run dev
 ### Server:
 ```bash
 cd server
-npm test        # Runs Vitest test suite (13 passing tests)
+npm test        # Runs Vitest test suite (24 passing tests)
 npm run lint    # Runs ESLint (0 errors, 0 warnings)
 ```
 
@@ -91,6 +94,12 @@ npm run build   # Production bundle verification
 | `POST` | `/api/auth/logout` | Clears refresh token cookie and ends session | No |
 | `POST` | `/api/auth/refresh` | Issues fresh access token using valid httpOnly cookie | No |
 | `GET` | `/api/auth/me` | Fetches current user profile from verified JWT | Yes (Bearer token) |
+| `GET` | `/api/tasks` | Paginated task list with status, priority, and sorting filters | Yes (Bearer token) |
+| `GET` | `/api/tasks/stats` | Aggregated dashboard stats (total, todo, in-progress, done, overdue) | Yes (Bearer token) |
+| `POST` | `/api/tasks` | Create a new task assigned to authenticated user | Yes (Bearer token) |
+| `GET` | `/api/tasks/:id` | Retrieve single task owned by user (404 for other users) | Yes (Bearer token) |
+| `PATCH` | `/api/tasks/:id` | Update task details or toggle status (404 for other users) | Yes (Bearer token) |
+| `DELETE` | `/api/tasks/:id` | Delete task owned by user (404 for other users) | Yes (Bearer token) |
 
 ---
 
