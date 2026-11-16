@@ -1,13 +1,29 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+let currentAccessToken = null;
+
+export function setAccessToken(token) {
+  currentAccessToken = token;
+}
+
+export function getAccessToken() {
+  return currentAccessToken;
+}
+
 export async function apiRequest(endpoint, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (currentAccessToken) {
+    headers.Authorization = `Bearer ${currentAccessToken}`;
+  }
+
   const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    credentials: 'include',
     ...options,
+    headers,
+    credentials: 'include',
   };
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);

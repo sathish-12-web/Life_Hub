@@ -6,21 +6,23 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
 
 ---
 
-## Current Status: Sprint 1 (Foundation & First Migration)
+## Current Status: Sprint 2 Complete (Authentication & Protected Routes)
 
-- [x] Repository initialized with Git and standard structure.
-- [x] Express backend configured with ES Modules, centralized error handling, and security middlewares (Helmet, CORS, Cookie-parser).
-- [x] PostgreSQL connection active via Prisma ORM (`@prisma/adapter-pg`).
-- [x] Initial migration applied for core models: `User` and `Task`.
-- [x] Health check endpoint `GET /api/health` live with automated test coverage.
-- [x] React (Vite) client shell configured with Redux Toolkit and Tailwind CSS.
+- [x] **Sprint 1 (Foundation):** Express server, Prisma migrations, PostgreSQL integration, and React client shell.
+- [x] **Sprint 2 (Authentication):**
+  - Registration with Zod validation, unique lowercase email check, and bcrypt password hashing.
+  - Login with brute-force rate limiting and non-revealing error messages.
+  - Dual-token auth: short-lived JWT access token in memory + httpOnly refresh cookie.
+  - Protected route middleware (`authenticate.js`) and user profile retrieval (`GET /api/auth/me`).
+  - Automated integration test suite covering happy paths, 400 validation, 401 unauthenticated, and 409 conflicts.
+  - Redux Toolkit auth slice and responsive login/register UI in React.
 
 ---
 
 ## Tech Stack
 
 - **Client:** React 19, Redux Toolkit, Tailwind CSS v4, React Router DOM, Recharts, Vite
-- **Server:** Node.js (v22+), Express 5, Prisma 7, Zod, Helmet, CORS, Cookie-parser, bcryptjs, jsonwebtoken
+- **Server:** Node.js (v22+), Express 5, Prisma 7, Zod, Helmet, CORS, Cookie-parser, bcryptjs, jsonwebtoken, express-rate-limit
 - **Database:** PostgreSQL 18 (Local Service or Docker)
 - **Testing & Quality:** Vitest, Supertest, ESLint, Prettier
 
@@ -38,6 +40,8 @@ Copy `.env.example` to `server/.env`:
 # In server/.env
 DATABASE_URL="postgresql://lifehub:change_me@localhost:5432/lifehub?schema=public"
 TEST_DATABASE_URL="postgresql://lifehub:change_me@localhost:5432/lifehub_test?schema=public"
+JWT_ACCESS_SECRET="your_access_secret"
+JWT_REFRESH_SECRET="your_refresh_secret"
 ```
 
 ### 3. Run Backend (API)
@@ -65,8 +69,8 @@ npm run dev
 ### Server:
 ```bash
 cd server
-npm test        # Runs Vitest test suite
-npm run lint    # Runs ESLint
+npm test        # Runs Vitest test suite (13 passing tests)
+npm run lint    # Runs ESLint (0 errors, 0 warnings)
 ```
 
 ### Client:
@@ -77,11 +81,16 @@ npm run build   # Production bundle verification
 
 ---
 
-## API Summary (Sprint 1)
+## API Summary
 
-| Method | Endpoint | Description | Status |
+| Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/health` | Verifies API runtime and PostgreSQL database connection | 200 OK |
+| `GET` | `/api/health` | Verifies API runtime and PostgreSQL database connection | No |
+| `POST` | `/api/auth/register` | Register new user, hashes password, sets refresh cookie | No (Rate-limited) |
+| `POST` | `/api/auth/login` | Authenticate user, returns access token + refresh cookie | No (Rate-limited) |
+| `POST` | `/api/auth/logout` | Clears refresh token cookie and ends session | No |
+| `POST` | `/api/auth/refresh` | Issues fresh access token using valid httpOnly cookie | No |
+| `GET` | `/api/auth/me` | Fetches current user profile from verified JWT | Yes (Bearer token) |
 
 ---
 
