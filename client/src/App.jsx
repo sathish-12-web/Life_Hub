@@ -5,6 +5,7 @@ import { refreshSession, logoutUser } from './features/auth/authSlice';
 import AuthForms from './features/auth/AuthForms';
 import TaskList from './features/tasks/TaskList';
 import PlannerView from './features/planner/PlannerView';
+import ExpensesView from './features/expenses/ExpensesView';
 
 export default function App() {
   const [healthStatus, setHealthStatus] = useState({ loading: true, data: null, error: null });
@@ -64,6 +65,17 @@ export default function App() {
               >
                 Planner & Events
               </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('expenses')}
+                className={`py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'expenses'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Expenses & Reports
+              </button>
             </nav>
           )}
         </div>
@@ -85,7 +97,7 @@ export default function App() {
             </div>
           ) : (
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-              Sprint 4 Active
+              Sprint 5 Active
             </span>
           )}
         </div>
@@ -120,15 +132,30 @@ export default function App() {
               >
                 Planner
               </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('expenses')}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'expenses' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Expenses
+              </button>
             </div>
 
-            {activeModule === 'tasks' ? <TaskList /> : <PlannerView />}
+            {activeModule === 'tasks' ? (
+              <TaskList />
+            ) : activeModule === 'planner' ? (
+              <PlannerView />
+            ) : (
+              <ExpensesView />
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 mb-4">
-                Sprint 4: Tasks & Calendar Planner
+                Sprint 5: Tasks, Calendar & Financial Expenses
               </span>
               <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
                 Your personal workspace, organized and private.
@@ -149,6 +176,10 @@ export default function App() {
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
+                  <span>Financial Expenses & database SQL aggregate reports</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-slate-700">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
                   <span>Strict multi-user isolation on all endpoints</span>
                 </div>
               </div>
@@ -163,7 +194,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="max-w-4xl mx-auto w-full py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-200 gap-2">
-        <span>LIFEHUB &bull; Sprint 4 Complete &bull; React, Express, PostgreSQL, Prisma</span>
+        <span>LIFEHUB &bull; Sprint 5 Complete &bull; React, Express, PostgreSQL, Prisma</span>
         <span className="flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${healthStatus.data ? 'bg-emerald-500' : 'bg-amber-400'}`} />
           <span>API: {healthStatus.data?.status || 'Connecting...'}</span>
