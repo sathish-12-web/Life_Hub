@@ -6,7 +6,7 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
 
 ---
 
-## Current Status: Milestone 1 / Sprint 3 Complete (Tasks CRUD & Dashboard)
+## Current Status: Sprint 4 Complete (Planner & Events)
 
 - [x] **Sprint 1 (Foundation):** Express server, Prisma migrations, PostgreSQL integration, and React client shell.
 - [x] **Sprint 2 (Authentication):**
@@ -16,9 +16,14 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
   - Protected route middleware (`authenticate.js`) and user profile retrieval (`GET /api/auth/me`).
 - [x] **Sprint 3 (Tasks CRUD & Dashboard - First Milestone Vertical Slice):**
   - Full task lifecycle (create, paginated list, filter by status/priority, edit, complete, delete).
-  - Strict user isolation tests: User B cannot access, read, modify, or delete User A's tasks (returning 404 Not Found to prevent ID enumeration).
+  - Strict user isolation tests: User B cannot access, read, modify, or delete User A's tasks (returning 404 Not Found).
   - Dashboard overview metrics (Total, To Do, In Progress, Completed, Overdue).
   - Interactive React interface with filter tabs, priority indicators, tags, and modal dialogs.
+- [x] **Sprint 4 (Planner & Events):**
+  - `events` database model with `endAt >= startAt` validation and `(ownerId, startAt)` indexing.
+  - Full Events CRUD with date range queries (`from`, `to`), recurrence rules (`DAILY`, `WEEKLY`, `MONTHLY`).
+  - Strict user isolation tests: User B cannot view, modify, or delete User A's calendar events (returning 404 Not Found).
+  - React Planner view with agenda timeline, event modal, and date badges.
 
 ---
 
@@ -72,7 +77,7 @@ npm run dev
 ### Server:
 ```bash
 cd server
-npm test        # Runs Vitest test suite (24 passing tests)
+npm test        # Runs Vitest test suite (35 passing tests across 4 suites)
 npm run lint    # Runs ESLint (0 errors, 0 warnings)
 ```
 
@@ -100,10 +105,16 @@ npm run build   # Production bundle verification
 | `GET` | `/api/tasks/:id` | Retrieve single task owned by user (404 for other users) | Yes (Bearer token) |
 | `PATCH` | `/api/tasks/:id` | Update task details or toggle status (404 for other users) | Yes (Bearer token) |
 | `DELETE` | `/api/tasks/:id` | Delete task owned by user (404 for other users) | Yes (Bearer token) |
+| `GET` | `/api/events` | List events with date range filtering (`from`, `to`) | Yes (Bearer token) |
+| `POST` | `/api/events` | Schedule an event with start/end time and recurrence | Yes (Bearer token) |
+| `GET` | `/api/events/:id` | Retrieve single event owned by user (404 for other users) | Yes (Bearer token) |
+| `PATCH` | `/api/events/:id` | Update event details or time range (404 for other users) | Yes (Bearer token) |
+| `DELETE` | `/api/events/:id` | Delete event owned by user (404 for other users) | Yes (Bearer token) |
 
 ---
 
-## Database Schema (Initial Migration: `init`)
+## Database Schema (Current Migrations)
 
 - **`users`**: `id` (UUID), `name`, `email` (unique), `password_hash`, `timezone`, `created_at`, `updated_at`
 - **`tasks`**: `id` (UUID), `owner_id` (FK -> users), `title`, `description`, `status` (`TODO`, `IN_PROGRESS`, `DONE`, `CANCELLED`), `priority` (`LOW`, `MEDIUM`, `HIGH`, `URGENT`), `due_at`, `tags`, `created_at`, `updated_at`
+- **`events`**: `id` (UUID), `owner_id` (FK -> users), `title`, `description`, `start_at`, `end_at`, `reminder_at`, `recurrence_rule`, `created_at`, `updated_at`

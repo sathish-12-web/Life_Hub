@@ -29,7 +29,8 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  tasks Task[]
+  tasks  Task[]
+  events Event[]
 
   @@map("users")
 }
@@ -52,4 +53,24 @@ model Task {
   @@index([ownerId])
   @@index([ownerId, status, dueAt])
   @@map("tasks")
+}
+
+model Event {
+  id             String    @id @default(uuid()) @db.Uuid
+  ownerId        String    @map("owner_id") @db.Uuid
+  spaceId        String?   @map("space_id") @db.Uuid
+  title          String
+  description    String?
+  startAt        DateTime  @map("start_at") @db.Timestamptz(6)
+  endAt          DateTime  @map("end_at") @db.Timestamptz(6)
+  reminderAt     DateTime? @map("reminder_at") @db.Timestamptz(6)
+  recurrenceRule String?   @map("recurrence_rule")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([ownerId, startAt])
+  @@map("events")
 }

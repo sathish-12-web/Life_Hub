@@ -4,9 +4,11 @@ import { api } from './services/api';
 import { refreshSession, logoutUser } from './features/auth/authSlice';
 import AuthForms from './features/auth/AuthForms';
 import TaskList from './features/tasks/TaskList';
+import PlannerView from './features/planner/PlannerView';
 
 export default function App() {
   const [healthStatus, setHealthStatus] = useState({ loading: true, data: null, error: null });
+  const [activeModule, setActiveModule] = useState('tasks'); // 'tasks' or 'planner'
   const dispatch = useDispatch();
   const { user, isAuthenticated, loading: authLoading } = useSelector((state) => state.auth);
 
@@ -32,9 +34,38 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between p-4 sm:p-6">
       {/* Header */}
       <header className="max-w-4xl mx-auto w-full py-4 flex items-center justify-between border-b border-slate-200">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">LIFEHUB</h1>
-          <p className="text-xs sm:text-sm text-slate-500">Personal Workspace & Life Organization</p>
+        <div className="flex items-center gap-6">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">LIFEHUB</h1>
+            <p className="text-xs sm:text-sm text-slate-500">Personal Workspace & Life Organization</p>
+          </div>
+
+          {isAuthenticated && (
+            <nav className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setActiveModule('tasks')}
+                className={`py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'tasks'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Tasks & Dashboard
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('planner')}
+                className={`py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'planner'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Planner & Events
+              </button>
+            </nav>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
@@ -54,7 +85,7 @@ export default function App() {
             </div>
           ) : (
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-              Sprint 3 Active
+              Sprint 4 Active
             </span>
           )}
         </div>
@@ -69,29 +100,35 @@ export default function App() {
           </div>
         ) : isAuthenticated && user ? (
           <div className="space-y-6">
-            {/* Top Greeting */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900">Workspace Dashboard</h2>
-                <p className="text-xs text-slate-500">
-                  Welcome back, <strong className="text-slate-700">{user.name}</strong>. Here is your daily productivity agenda.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                  Private Session Active
-                </span>
-              </div>
+            {/* Mobile Nav Tabs */}
+            <div className="sm:hidden flex rounded-lg bg-slate-100 p-1 mb-4">
+              <button
+                type="button"
+                onClick={() => setActiveModule('tasks')}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'tasks' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Tasks
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('planner')}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'planner' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Planner
+              </button>
             </div>
 
-            {/* Task Management System */}
-            <TaskList />
+            {activeModule === 'tasks' ? <TaskList /> : <PlannerView />}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 mb-4">
-                Milestone 1: Tasks & Workspaces
+                Sprint 4: Tasks & Calendar Planner
               </span>
               <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
                 Your personal workspace, organized and private.
@@ -104,15 +141,15 @@ export default function App() {
               <div className="mt-6 space-y-3">
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Full Task lifecycle (Create, Edit, Prioritize, Complete, Delete)</span>
+                  <span>Full Tasks lifecycle & dashboard metrics</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Guaranteed data isolation (User B cannot access User A resources)</span>
+                  <span>Calendar Planner & schedule events with recurrence</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-700">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold">✓</span>
-                  <span>Automated test coverage on all endpoints</span>
+                  <span>Strict multi-user isolation on all endpoints</span>
                 </div>
               </div>
             </div>
@@ -126,7 +163,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="max-w-4xl mx-auto w-full py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-200 gap-2">
-        <span>LIFEHUB &bull; Sprint 3 Complete &bull; React, Express, PostgreSQL, Prisma</span>
+        <span>LIFEHUB &bull; Sprint 4 Complete &bull; React, Express, PostgreSQL, Prisma</span>
         <span className="flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${healthStatus.data ? 'bg-emerald-500' : 'bg-amber-400'}`} />
           <span>API: {healthStatus.data?.status || 'Connecting...'}</span>
