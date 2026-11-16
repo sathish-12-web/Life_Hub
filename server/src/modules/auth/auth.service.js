@@ -108,3 +108,24 @@ export async function getUserProfile(userId) {
 
   return sanitizeUser(user);
 }
+
+export async function updateUserProfile(userId, { name, timezone }) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new AppError('User not found', 404, 'NOT_FOUND');
+  }
+
+  const updateData = {};
+  if (name !== undefined) updateData.name = name.trim();
+  if (timezone !== undefined) updateData.timezone = timezone.trim();
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+  });
+
+  return sanitizeUser(updatedUser);
+}

@@ -6,7 +6,7 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
 
 ---
 
-## Current Status: Sprint 6 Complete (Notes with Search & Quick Capture MVP)
+## Current Status: Sprint 7 Complete (Tests, Security, Profile Settings & Polish)
 
 - [x] **Sprint 1 (Foundation):** Express server, Prisma migrations, PostgreSQL integration, and React client shell.
 - [x] **Sprint 2 (Authentication):**
@@ -36,6 +36,12 @@ LIFEHUB is a modular personal productivity system built with **React**, **Redux 
   - Quick Capture module with deterministic rule-based heuristic parsing (`POST /api/capture/preview`) extracting candidate type (`TASK`, `EVENT`, `TRANSACTION`, `NOTE`) and fields.
   - Confirmation-before-save lifecycle (`POST /api/capture/confirm`) strictly honoring Rule #12 (never automatically creating records without user preview and explicit confirmation).
   - Interactive React interface with Notes grid, instant search, tag filter pills, workspace-wide Quick Capture bar, and editable preview modal.
+- [x] **Sprint 7 (Tests, Security, Profile Settings & Polish):**
+  - Profile settings endpoint (`PATCH /api/auth/profile`) for updating display name and timezone.
+  - Safe database seed script (`server/prisma/seed.js`) generating realistic sample data for demo account (`demo@lifehub.local`).
+  - Settings & Security overview UI (`SettingsView.jsx`) displaying multi-tenant posture, dual-token auth details, and session management.
+  - Comprehensive automated testing: 78 passing tests across 7 test suites.
+  - Mobile responsiveness polished down to 360px viewport width.
 
 ---
 
@@ -69,6 +75,7 @@ JWT_REFRESH_SECRET="your_refresh_secret"
 cd server
 npm install
 npx prisma migrate dev
+npm run seed    # Populates safe demo user (demo@lifehub.local / Password123!)
 npm run dev
 # Server runs on http://localhost:5000
 # Health check: http://localhost:5000/api/health
@@ -89,7 +96,7 @@ npm run dev
 ### Server:
 ```bash
 cd server
-npm test        # Runs Vitest test suite (75 passing tests across 7 suites)
+npm test        # Runs Vitest test suite (78 passing tests across 7 suites)
 npm run lint    # Runs ESLint (0 errors, 0 warnings)
 ```
 
@@ -111,6 +118,7 @@ npm run build   # Production bundle verification
 | `POST` | `/api/auth/logout` | Clears refresh token cookie and ends session | No |
 | `POST` | `/api/auth/refresh` | Issues fresh access token using valid httpOnly cookie | No |
 | `GET` | `/api/auth/me` | Fetches current user profile from verified JWT | Yes (Bearer token) |
+| `PATCH` | `/api/auth/profile` | Update user display name and timezone | Yes (Bearer token) |
 | `GET` | `/api/tasks` | Paginated task list with status, priority, and sorting filters | Yes (Bearer token) |
 | `GET` | `/api/tasks/stats` | Aggregated dashboard stats (total, todo, in-progress, done, overdue) | Yes (Bearer token) |
 | `POST` | `/api/tasks` | Create a new task assigned to authenticated user | Yes (Bearer token) |

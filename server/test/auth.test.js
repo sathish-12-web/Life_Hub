@@ -179,4 +179,40 @@ describe('Auth Module (/api/auth)', () => {
       expect(cookies.some((c) => c.includes('refreshToken=;') || c.includes('Max-Age=0'))).toBe(true);
     });
   });
+
+  describe('PATCH /api/auth/profile', () => {
+    it('should reject unauthenticated profile updates with 401', async () => {
+      const res = await request(app)
+        .patch('/api/auth/profile')
+        .send({ name: 'Hacker Name' });
+
+      expect(res.status).toBe(401);
+      expect(res.body.error.code).toBe('UNAUTHORIZED');
+    });
+
+    it('should reject invalid short name with 400', async () => {
+      const res = await request(app)
+        .patch('/api/auth/profile')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ name: 'A' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error.code).toBe('VALIDATION_ERROR');
+    });
+
+    it('should update name and timezone successfully', async () => {
+      const res = await request(app)
+        .patch('/api/auth/profile')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          name: 'Updated Alpha User',
+          timezone: 'America/New_York',
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.user.name).toBe('Updated Alpha User');
+      expect(res.body.data.user.timezone).toBe('America/New_York');
+      expect(res.body.data.user.passwordHash).toBeUndefined();
+    });
+  });
 });

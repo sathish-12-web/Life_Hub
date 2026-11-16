@@ -7,6 +7,7 @@ import TaskList from './features/tasks/TaskList';
 import PlannerView from './features/planner/PlannerView';
 import ExpensesView from './features/expenses/ExpensesView';
 import NotesView from './features/notes/NotesView';
+import SettingsView from './features/settings/SettingsView';
 import QuickCaptureBar from './features/capture/QuickCaptureBar';
 import CapturePreviewModal from './features/capture/CapturePreviewModal';
 
@@ -90,6 +91,17 @@ export default function App() {
               >
                 Notes & Ideas
               </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('settings')}
+                className={`py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'settings'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Settings
+              </button>
             </nav>
           )}
         </div>
@@ -111,7 +123,7 @@ export default function App() {
             </div>
           ) : (
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-              Sprint 6 Active
+              Sprint 7 Active
             </span>
           )}
         </div>
@@ -167,6 +179,15 @@ export default function App() {
               >
                 Notes
               </button>
+              <button
+                type="button"
+                onClick={() => setActiveModule('settings')}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  activeModule === 'settings' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Settings
+              </button>
             </div>
 
             {activeModule === 'tasks' ? (
@@ -175,8 +196,10 @@ export default function App() {
               <PlannerView />
             ) : activeModule === 'expenses' ? (
               <ExpensesView />
-            ) : (
+            ) : activeModule === 'notes' ? (
               <NotesView />
+            ) : (
+              <SettingsView />
             )}
 
             {/* Quick Capture Preview Modal */}
@@ -186,13 +209,13 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 mb-4">
-                Sprint 6: Tasks, Planner, Expenses, Notes & Quick Capture
+                Sprint 7: Tests, Security, Profile Settings & Polish
               </span>
               <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
                 Your personal workspace, organized and private.
               </h2>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Keep your tasks, upcoming schedule, expenses, and notes in one unified system.
+                Keep your tasks, upcoming schedule, expenses, notes, and profile settings in one unified system.
                 Private by default, fast, and protected by strict authorization boundaries.
               </p>
 
@@ -229,7 +252,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="max-w-4xl mx-auto w-full py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-200 gap-2">
-        <span>LIFEHUB &bull; Sprint 6 Complete &bull; React, Express, PostgreSQL, Prisma</span>
+        <span>LIFEHUB &bull; Sprint 7 Complete &bull; React, Express, PostgreSQL, Prisma</span>
         <span className="flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${healthStatus.data ? 'bg-emerald-500' : 'bg-amber-400'}`} />
           <span>API: {healthStatus.data?.status || 'Connecting...'}</span>

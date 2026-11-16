@@ -15,3 +15,10 @@ export const loginSchema = {
     password: z.string().min(1, 'Password is required'),
   }),
 };
+
+export const updateProfileSchema = {
+  body: z.object({
+    name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100).optional(),
+    timezone: z.string().trim().min(1).max(50).optional(),
+  }),
+};
